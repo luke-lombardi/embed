@@ -7,5 +7,6 @@ unittest:
 
 clean:
 	make -C libraries/pubnub/posix -f posix.mk clean
+	rm build/*.a build/*.o
 	# make -C libraries/pubnub/openssl -f posix.mk clean
 	# make -C core clean
