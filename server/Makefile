@@ -4,14 +4,14 @@ PUBNUB_ROOT=libraries/pubnub
 PUBNUB_INCLUDES=-I libraries/pubnub/posix -I libraries/pubnub
 
 APP_SRC_ROOT=src
-APP_SRC=$(APP_SRC_ROOT)/pubnub_sync_sample.c
+APP_SRC=$(APP_SRC_ROOT)/server.c $(APP_SRC_ROOT)/sub.c
 
 INCLUDES=-I $(APP_SRC_ROOT)
 
 all: libraries app
 libraries: pubnub
 
-# pubnub libraries are dropped into build/ before they are linked by testapp
+# pubnub libraries are dropped into build/ before they are linked
 pubnub:
 	make -C libraries/pubnub/posix -f posix.mk
 	# make -C libraries/pubnub/openssl -f posix.mk

@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    "pubnub_timers.h": "c",
+    "time.h": "c"
+  }
+}
