@@ -17,7 +17,7 @@ pubnub:
 	# make -C libraries/pubnub/openssl -f posix.mk
 
 app:
-	gcc -o build/bin/app $(APP_SRC) $(BUILD_ROOT)/pubnub_sync.a $(PUBNUB_INCLUDES) $(INCLUDES)
+	gcc -pthread -o build/bin/app $(APP_SRC) $(BUILD_ROOT)/pubnub_sync.a $(PUBNUB_INCLUDES) $(INCLUDES)
 
 unittest:
 	make -C core
