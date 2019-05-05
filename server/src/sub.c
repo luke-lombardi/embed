@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
-
 #include <time.h>
+
 
 struct Sub_Instance {
   pubnub_t *Ctx; 
@@ -23,7 +23,7 @@ Sub_RetCode Sub_Init() {
   assert(Instance.IsInitialized == 0);
   pubnub_t *ctx = pubnub_alloc();
 
-  if (NULL == ctx) {
+  if (ctx == NULL) {
     puts("Couldn't allocate a Pubnub context");
     return Sub_RetCode__Error_Alloc;
   } else {
@@ -42,5 +42,8 @@ Sub_RetCode Sub_Uninit() {
 
   pubnub_free(Instance.Ctx);
 
+  Instance.IsInitialized = 0;
+  Instance.Ctx = NULL;
+  
   return Sub_RetCode__Success;
 }
