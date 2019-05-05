@@ -10,7 +10,6 @@
 // internal methods
 static uint8_t internal__worker_name_exists(char * name);
 
-
 struct worker_manager_instance {
   uint8_t is_initialized: 1;
   worker_t workers[MAX_WORKERS];
@@ -34,7 +33,12 @@ void worker_manager_uninit() {
 }
 
 
-worker_manager_retcode_t worker_manager_create_worker(worker_func func, void* params, char *name, uint8_t start_on_create) {
+worker_manager_retcode_t worker_manager_create_worker ( 
+  worker_func func, 
+  void* params, 
+  char *name, 
+  uint8_t start_on_create ) {
+
   uint8_t idx;
   int worker_idx = -1;
 
@@ -51,12 +55,21 @@ worker_manager_retcode_t worker_manager_create_worker(worker_func func, void* pa
   
   // don't allow duplicate worker names
   if(internal__worker_name_exists(name)) {
-    return worker_manager_retcode__WORKER_DUPLICATE_NAME;
+    return worker_manager_retcode__DUPLICATE_WORKER;
   }
 
+  instance.workers[worker_idx].in_use = 1;
   instance.workers[worker_idx].func = func;
-  instance.workers[worker_idx].params = params;
+
+  struct worker_params *wp = malloc(sizeof(struct worker_params));
+  wp->worker_ptr = &(instance.workers[worker_idx]);
+  wp->params = params;
+
+  instance.workers[worker_idx].params = (void *) wp;
   instance.workers[worker_idx].name = name;
+
+  // initialize mutex
+  pthread_mutex_init(&(instance.workers[worker_idx].lock), NULL);
 
   // start thread right away if start_on_create is set
   if (start_on_create) {
@@ -64,13 +77,48 @@ worker_manager_retcode_t worker_manager_create_worker(worker_func func, void* pa
     /* const pthread_attr_t *attr */ NULL,
     instance.workers[worker_idx].func,
     instance.workers[worker_idx].params);
-    instance.workers[worker_idx].started = 1;
+    instance.workers[worker_idx].running = 1;
   }
 
   return worker_manager_retcode__SUCCESS;
 }
 
 worker_manager_retcode_t worker_manager_start_worker(const char* name) {
+  int worker_idx = worker_manager_get_worker_index(name);
+
+  if(worker_idx == -1) {
+    return worker_manager_retcode__WORKER_NOT_FOUND;
+  }
+
+  // TODO: add error checking on pthread_create
+  // start thread
+  pthread_create(&(instance.workers[worker_idx].thread), 
+    /* const pthread_attr_t *attr */ NULL,
+    instance.workers[worker_idx].func,
+    instance.workers[worker_idx].params);
+
+  instance.workers[worker_idx].running = 1;
+
+  return worker_manager_retcode__SUCCESS;
+}
+
+
+worker_manager_retcode_t worker_manager_stop_worker(const char* name) {
+  int worker_idx = worker_manager_get_worker_index(name);
+
+  if(worker_idx == -1) {
+    return worker_manager_retcode__WORKER_NOT_FOUND;
+  }
+
+  pthread_mutex_lock(&(instance.workers[worker_idx].lock));
+  instance.workers[worker_idx].running = 0;
+  pthread_mutex_unlock(&(instance.workers[worker_idx].lock));
+  
+  return worker_manager_retcode__SUCCESS;
+}
+
+
+int worker_manager_get_worker_index(const char *name) {
   int worker_idx = -1;
   uint8_t idx;
 
@@ -85,20 +133,7 @@ worker_manager_retcode_t worker_manager_start_worker(const char* name) {
     }
   }
 
-  if(worker_idx == -1) {
-    return worker_manager_retcode__WORKER_NOT_FOUND;
-  }
-
-  // TODO: add error checking on pthread_create
-  // start thread
-  pthread_create(&(instance.workers[worker_idx].thread), 
-    /* const pthread_attr_t *attr */ NULL,
-    instance.workers[worker_idx].func,
-    instance.workers[worker_idx].params);
-
-  instance.workers[worker_idx].started = 1;
-
-  return worker_manager_retcode__SUCCESS;
+  return worker_idx;
 }
 
 /////////////////////////////////////////////////// internal methods
@@ -111,7 +146,7 @@ static uint8_t internal__worker_name_exists(char * name) {
     if(instance.workers[idx].name == NULL)
       continue;
 
-    if ( strcmp( name, (const char*) instance.workers[idx].name) == 0) {
+    if ( strcmp( name, instance.workers[idx].name) == 0) {
       worker_idx = idx;
       break;
     }
