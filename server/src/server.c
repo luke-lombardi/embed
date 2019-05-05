@@ -15,7 +15,8 @@ static void init() {
   sub_init();
   worker_manager_init();
 
-  worker_manager_create_worker(test, NULL, "test_worker", 0 /*start_on_create*/);
+  worker_manager_create_worker(test, NULL, "test_worker_1", 0 /* start_on_create */);
+  worker_manager_create_worker(test, NULL, "test_worker_2", 0 /* start_on_create */);
 }
 
 static void uninit() {
