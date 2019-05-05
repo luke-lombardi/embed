@@ -1,47 +1,36 @@
-#include "sub.h"
 #include "worker.h"
+#include "sub.h"
+#include "cache.h"
 
 #include <stdio.h>
 #include <pthread.h>
 
+void* test(void* param) {
+  printf("test worked");
 
-struct AppWorkers {
-  worker_t sub;
-  worker_t cache;
-};
-
-static struct AppWorkers Workers = {0};
-
-void* test(void *param)
-{
-  printf("it went\n");
   return NULL;
 }
 
+static void init() {
+  sub_init();
+  worker_manager_init();
 
-void create_worker_threads() {
-  Workers.sub.thread = pthread_create(&(Workers.sub.thread), NULL, test, NULL);
-  Workers.cache.thread = pthread_create(&(Workers.cache.thread), NULL, test, NULL);
-
+  worker_manager_create_worker(test, NULL, "test_worker", 0 /*start_on_create*/);
 }
 
+static void uninit() {
+  worker_manager_uninit();
+  sub_uninit();
+}
 
-int main() {
-  Sub_Init();
+int main(int argc, char **argv) {
+  init();
 
-  create_worker_threads();
-
-  // if(pthread_join(inc_x_thread, NULL)) {
-  //   fprintf(stderr, "Error joining thread\n");
-  //   return 2;
-  // }
+  worker_manager_start_worker("test_worker");
 
   while(1) {
-
-
-    break;
+    // break;
   }
-
-  // Sub_Uninit();
+  
   return 0;
 }

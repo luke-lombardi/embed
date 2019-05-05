@@ -4,7 +4,7 @@ PUBNUB_ROOT=libraries/pubnub
 PUBNUB_INCLUDES=-I libraries/pubnub/posix -I libraries/pubnub
 
 APP_SRC_ROOT=src
-APP_SRC=$(APP_SRC_ROOT)/server.c $(APP_SRC_ROOT)/sub.c
+APP_SRC=$(APP_SRC_ROOT)/server.c $(APP_SRC_ROOT)/sub.c $(APP_SRC_ROOT)/cache.c $(APP_SRC_ROOT)/worker.c
 
 INCLUDES=-I $(APP_SRC_ROOT)
 
@@ -17,7 +17,7 @@ pubnub:
 	# make -C libraries/pubnub/openssl -f posix.mk
 
 app:
-	gcc -pthread -o build/bin/app $(APP_SRC) $(BUILD_ROOT)/pubnub_sync.a $(PUBNUB_INCLUDES) $(INCLUDES)
+	gcc -g -pthread -o build/bin/app $(APP_SRC) $(BUILD_ROOT)/pubnub_sync.a $(PUBNUB_INCLUDES) $(INCLUDES)
 
 unittest:
 	make -C core

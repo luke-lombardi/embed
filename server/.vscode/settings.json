@@ -3,6 +3,8 @@
     "pubnub_timers.h": "c",
     "time.h": "c",
     "stdio.h": "c",
-    "pthread.h": "c"
+    "pthread.h": "c",
+    "worker.h": "c",
+    "stdlib.h": "c"
   }
 }

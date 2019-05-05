@@ -2,16 +2,12 @@
   "tasks": [
     {
       "type": "shell",
-      "label": "clang build active file",
-      "command": "/usr/bin/clang",
+      "label": "make-app",
+      "command": "make app",
       "args": [
-        "-g",
-        "${file}",
-        "-o",
-        "${fileDirname}/${fileBasenameNoExtension}"
       ],
       "options": {
-        "cwd": "/usr/bin"
+        "cwd": "/Users/lukelombardi/ss/embed/server"
       }
     }
   ],

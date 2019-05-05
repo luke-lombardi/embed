@@ -5,17 +5,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "clang build and debug active file",
-      "type": "cppdbg",
+      "name": "DBG:server",
+      "type": "lldb",
       "request": "launch",
-      "program": "${fileDirname}/${fileBasenameNoExtension}",
-      "args": [],
-      "stopAtEntry": false,
+      "env": {
+      },
+      "program": "/Users/lukelombardi/ss/embed/server/build/bin/app",
+      "args": [""],
       "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": false,
-      "MIMode": "lldb",
-      "preLaunchTask": "clang build active file"
-    }
+      "preLaunchTask": "make-app",
+      // "stopOnEntry": true
+    },
   ]
 }

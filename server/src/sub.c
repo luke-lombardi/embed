@@ -11,39 +11,39 @@
 #include <time.h>
 
 
-struct Sub_Instance {
-  pubnub_t *Ctx; 
-  uint8_t IsInitialized: 1;
+struct sub_instance {
+  pubnub_t *ctx; 
+  uint8_t is_initialized: 1;
 };
 
-static struct Sub_Instance Instance = { 0} ;
+static struct sub_instance instance = { 0} ;
 
 
-Sub_RetCode Sub_Init() {
-  assert(Instance.IsInitialized == 0);
+sub_retcode_t sub_init() {
+  assert(instance.is_initialized == 0);
   pubnub_t *ctx = pubnub_alloc();
 
   if (ctx == NULL) {
     puts("Couldn't allocate a Pubnub context");
-    return Sub_RetCode__Error_Alloc;
+    return sub_retcode__ERROR_ALLOC;
   } else {
     printf("ok\n");
   }
 
-  Instance.Ctx = ctx;
-  Instance.IsInitialized = 1;
+  instance.ctx = ctx;
+  instance.is_initialized = 1;
 
-  return Sub_RetCode__Success;
+  return sub_retcode__SUCCESS;
 }
 
 
-Sub_RetCode Sub_Uninit() {
-  assert(Instance.IsInitialized == 1);
+sub_retcode_t sub_uninit() {
+  assert(instance.is_initialized == 1);
 
-  pubnub_free(Instance.Ctx);
+  pubnub_free(instance.ctx);
 
-  Instance.IsInitialized = 0;
-  Instance.Ctx = NULL;
-  
-  return Sub_RetCode__Success;
+  instance.is_initialized = 0;
+  instance.ctx = NULL;
+
+  return sub_retcode__SUCCESS;
 }
