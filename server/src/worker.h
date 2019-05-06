@@ -1,7 +1,7 @@
 /*
   Provides a high level interface to pthreads.
 
-  With it, you can do the following:
+  You can do the following:
     - create a worker thead
     - start/stop it
 
@@ -46,5 +46,6 @@ void worker_manager_uninit();
 worker_manager_retcode_t worker_manager_create_worker(worker_func func, void* params, char *name, uint8_t start_on_create);
 worker_manager_retcode_t worker_manager_start_worker(const char* name);
 worker_manager_retcode_t worker_manager_stop_worker(const char* name);
+worker_manager_retcode_t worker_manager_stop_all();
 
 #endif 

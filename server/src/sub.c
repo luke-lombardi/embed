@@ -4,6 +4,7 @@
 #include "core/pubnub_timers.h"
 
 #include "sub.h"
+#include "worker.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -36,7 +37,6 @@ sub_retcode_t sub_init() {
   return sub_retcode__SUCCESS;
 }
 
-
 sub_retcode_t sub_uninit() {
   assert(instance.is_initialized == 1);
 
@@ -46,4 +46,24 @@ sub_retcode_t sub_uninit() {
   instance.ctx = NULL;
 
   return sub_retcode__SUCCESS;
+}
+
+void* sub_worker(void *params) {
+  struct worker_params *wp = (struct worker_params *) params;
+  uint8_t running = 1;
+
+  assert(sub_init() == sub_retcode__SUCCESS);
+
+  while(running) {
+
+
+    pthread_mutex_lock(&(wp->worker_ptr->lock));
+    running = wp->worker_ptr->running;
+    pthread_mutex_unlock(&(wp->worker_ptr->lock));
+  }
+
+  wp->worker_ptr->finished = 1;
+
+  sub_uninit();
+  return NULL;
 }

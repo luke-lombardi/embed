@@ -1,14 +1,15 @@
-#include <stdint.h>
 #include <assert.h>
 #include <pthread.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "worker.h"
 
 // internal methods
 static uint8_t internal__worker_name_exists(char * name);
 static int internal__get_worker_index(const char *name);
+static int internal__stop_worker(const char *name);
 
 struct worker_manager_instance {
   uint8_t is_initialized;
@@ -20,16 +21,14 @@ static struct worker_manager_instance instance = { 0 };
 
 void worker_manager_init() {
   assert(instance.is_initialized == 0);
-
   instance.is_initialized = 1;
 }
 
 
 void worker_manager_uninit() {
   assert(instance.is_initialized == 1);
-
-  // TODO: stop all threads that are executing in a safe way
-  instance.is_initialized = 0;
+  worker_manager_stop_all();
+  memset(&instance, 0, sizeof(struct worker_manager_instance));
 }
 
 
@@ -104,23 +103,20 @@ worker_manager_retcode_t worker_manager_start_worker(const char* name) {
 
 
 worker_manager_retcode_t worker_manager_stop_worker(const char* name) {
-  int worker_idx = internal__get_worker_index(name);
-
-  if(worker_idx == -1) {
-    return worker_manager_retcode__WORKER_NOT_FOUND;
-  }
-
-  pthread_mutex_lock(&(instance.workers[worker_idx].lock));
-  instance.workers[worker_idx].running = 0;
-  pthread_mutex_unlock(&(instance.workers[worker_idx].lock));
-
-  // TODO: destroy mutex? pthread_mutex_destroy(&lock); 
-  
+  internal__stop_worker(name);
   return worker_manager_retcode__SUCCESS;
 }
 
 worker_manager_retcode_t worker_manager_stop_all() {
-  // pthread_join(tid[0], NULL); 
+  uint8_t idx;
+
+  // find worker index in instance.workers
+  for(idx = 0; idx < MAX_WORKERS; idx++) {
+    if(instance.workers[idx].name == NULL)
+      continue;
+  
+    internal__stop_worker(instance.workers[idx].name);
+  }
 
   return worker_manager_retcode__SUCCESS;
 }
@@ -164,4 +160,27 @@ static int internal__get_worker_index(const char *name) {
   }
 
   return worker_idx;
+}
+
+
+static int internal__stop_worker(const char *name) {
+  int worker_idx = internal__get_worker_index(name);
+
+  if(worker_idx == -1) {
+    return worker_manager_retcode__WORKER_NOT_FOUND;
+  }
+
+  pthread_mutex_lock(&(instance.workers[worker_idx].lock));
+  instance.workers[worker_idx].running = 0;
+  pthread_mutex_unlock(&(instance.workers[worker_idx].lock));
+
+  // join thread and destroy mutex
+  pthread_join(instance.workers[worker_idx].thread, NULL); 
+  pthread_mutex_destroy(&(instance.workers[worker_idx].lock));
+  instance.workers[worker_idx].in_use = 0;
+  instance.workers[worker_idx].name = NULL;
+
+  free(instance.workers[worker_idx].params);
+
+  return 0;
 }

@@ -8,5 +8,6 @@ typedef enum sub_retcode_t {
 
 sub_retcode_t sub_init();
 sub_retcode_t sub_uninit();
+void* sub_worker(void *params);
 
 #endif
