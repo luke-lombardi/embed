@@ -47,6 +47,4 @@ worker_manager_retcode_t worker_manager_create_worker(worker_func func, void* pa
 worker_manager_retcode_t worker_manager_start_worker(const char* name);
 worker_manager_retcode_t worker_manager_stop_worker(const char* name);
 
-int worker_manager_get_worker_index(const char *name);
-
 #endif 

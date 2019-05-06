@@ -9,9 +9,10 @@
 
 // internal methods
 static uint8_t internal__worker_name_exists(char * name);
+static int internal__get_worker_index(const char *name);
 
 struct worker_manager_instance {
-  uint8_t is_initialized: 1;
+  uint8_t is_initialized;
   worker_t workers[MAX_WORKERS];
 };
 
@@ -84,7 +85,7 @@ worker_manager_retcode_t worker_manager_create_worker (
 }
 
 worker_manager_retcode_t worker_manager_start_worker(const char* name) {
-  int worker_idx = worker_manager_get_worker_index(name);
+  int worker_idx = internal__get_worker_index(name);
 
   if(worker_idx == -1) {
     return worker_manager_retcode__WORKER_NOT_FOUND;
@@ -104,7 +105,7 @@ worker_manager_retcode_t worker_manager_start_worker(const char* name) {
 
 
 worker_manager_retcode_t worker_manager_stop_worker(const char* name) {
-  int worker_idx = worker_manager_get_worker_index(name);
+  int worker_idx = internal__get_worker_index(name);
 
   if(worker_idx == -1) {
     return worker_manager_retcode__WORKER_NOT_FOUND;
@@ -113,27 +114,16 @@ worker_manager_retcode_t worker_manager_stop_worker(const char* name) {
   pthread_mutex_lock(&(instance.workers[worker_idx].lock));
   instance.workers[worker_idx].running = 0;
   pthread_mutex_unlock(&(instance.workers[worker_idx].lock));
+
+  // TODO: destroy mutex? pthread_mutex_destroy(&lock); 
   
   return worker_manager_retcode__SUCCESS;
 }
 
+worker_manager_retcode_t worker_manager_stop_all() {
+  // pthread_join(tid[0], NULL); 
 
-int worker_manager_get_worker_index(const char *name) {
-  int worker_idx = -1;
-  uint8_t idx;
-
-  // find worker index in instance.workers
-  for(idx = 0; idx < MAX_WORKERS; idx++) {
-    if(instance.workers[idx].name == NULL)
-      continue;
-
-    if ( strcmp( name, (const char*) instance.workers[idx].name) == 0) {
-      worker_idx = idx;
-      break;
-    }
-  }
-
-  return worker_idx;
+  return worker_manager_retcode__SUCCESS;
 }
 
 /////////////////////////////////////////////////// internal methods
@@ -159,10 +149,20 @@ static uint8_t internal__worker_name_exists(char * name) {
   return 1;
 }
 
- /*
-    if(pthread_join(inc_x_thread, NULL)) {
-      fprintf(stderr, "Error joining thread\n");
-      return 2;
-    }
- */
+static int internal__get_worker_index(const char *name) {
+  int worker_idx = -1;
+  uint8_t idx;
 
+  // find worker index in instance.workers
+  for(idx = 0; idx < MAX_WORKERS; idx++) {
+    if(instance.workers[idx].name == NULL)
+      continue;
+
+    if ( strcmp( name, (const char*) instance.workers[idx].name) == 0) {
+      worker_idx = idx;
+      break;
+    }
+  }
+
+  return worker_idx;
+}

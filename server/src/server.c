@@ -10,11 +10,6 @@ void* test(void* params) {
   uint8_t running = 1;
 
   while(running) {
-
-
-
-  
-
     pthread_mutex_lock(&(wp->worker_ptr->lock));
     running = wp->worker_ptr->running;
     pthread_mutex_unlock(&(wp->worker_ptr->lock));
@@ -45,6 +40,13 @@ int main(int argc, char **argv) {
     worker_manager_stop_worker("test_worker");
     // break;
   }
-  
+
+  /*
+      if(pthread_join(inc_x_thread, NULL)) {
+        fprintf(stderr, "Error joining thread\n");
+        return 2;
+      }
+  */
+
   return 0;
 }
