@@ -6,7 +6,6 @@
 
 #include "worker.h"
 
-
 // internal methods
 static uint8_t internal__worker_name_exists(char * name);
 static int internal__get_worker_index(const char *name);

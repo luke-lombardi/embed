@@ -15,6 +15,9 @@ void* test(void* params) {
     pthread_mutex_unlock(&(wp->worker_ptr->lock));
   }
 
+  wp->worker_ptr->finished = 1;
+  wp->worker_ptr->in_use = 0;
+
   return NULL;
 }
 
