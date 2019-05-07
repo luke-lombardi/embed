@@ -2,6 +2,9 @@
 #define LOGGER_H
 
 #include <stdint.h>
+#include <stdio.h>
+
+#define LOGGER_FILE_OUT  "logs/server.log"
 
 enum logger_log_level {
   logger_log_level__TRACE = 0
@@ -21,7 +24,6 @@ typedef enum logger_retcode_t {
   logger_retcode__SUCCESS = 0
 } logger_retcode_t;
 
-
 typedef struct log_message_t {
   enum logger_log_level level;
   const char *message;
@@ -29,7 +31,7 @@ typedef struct log_message_t {
   uint16_t line_number;
 } log_message_t;
 
-logger_retcode_t logger_init();
+logger_retcode_t logger_init(FILE *fp);
 logger_retcode_t logger_uninit();
 logger_retcode_t logger_log(enum logger_log_level level, const char* message, const char* file, uint16_t line_number);
 
