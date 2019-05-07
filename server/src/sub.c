@@ -6,6 +6,7 @@
 #include "sub.h"
 #include "worker.h"
 #include "logger.h"
+#include "utils.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -56,11 +57,12 @@ void* sub_worker(void *params) {
   assert(sub_init() == sub_retcode__SUCCESS);
 
   while(running) {
-
-
     pthread_mutex_lock(&(wp->worker_ptr->lock));
     running = wp->worker_ptr->running;
     pthread_mutex_unlock(&(wp->worker_ptr->lock));
+
+
+    delay(1);
   }
 
   wp->worker_ptr->finished = 1;

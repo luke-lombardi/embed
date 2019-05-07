@@ -1,6 +1,7 @@
 #include "cache.h"
 #include "logger.h"
 #include "worker.h"
+#include "utils.h"
 
 #include <stdint.h>
 #include <assert.h>
@@ -29,11 +30,11 @@ void* cache_worker(void *params) {
   assert(cache_init() == cache_retcode__SUCCESS);
 
   while(running) {
-
-
     pthread_mutex_lock(&(wp->worker_ptr->lock));
     running = wp->worker_ptr->running;
     pthread_mutex_unlock(&(wp->worker_ptr->lock));
+
+    delay(1);
   }
 
   wp->worker_ptr->finished = 1;

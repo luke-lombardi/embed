@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #define LOGGER_FILE_OUT  "logs/server.log"
+#define LOGGER_MAX_MESSAGE_LENGTH 100
 
 enum logger_log_level {
   logger_log_level__TRACE = 0

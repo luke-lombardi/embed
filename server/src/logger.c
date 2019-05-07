@@ -43,6 +43,7 @@ logger_retcode_t logger_log(enum logger_log_level level, const char* message, co
   pthread_mutex_lock(&(instance.lock));
 
     assert(instance.is_initialized == 1);
+    assert(strlen(message) < LOGGER_MAX_MESSAGE_LENGTH);
 
     log_message_t *item = malloc(sizeof(log_message_t));
     item->level =  level;
@@ -69,7 +70,7 @@ void* logger_worker(void *params) {
     pthread_mutex_lock(&(instance.lock));
       item = (log_message_t*) linked_list_pop(instance.messages);
 
-      /* Get current time */
+      // get the current time
       time_t t = time(NULL);
       struct tm *lt = localtime(&t);
 
