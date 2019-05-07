@@ -34,7 +34,7 @@ logger_retcode_t logger_uninit() {
   return logger_retcode__SUCCESS;
 }
 
-logger_retcode_t logger_log(enum logger_log_level level, const char* message) {
+logger_retcode_t logger_log(enum logger_log_level level, const char* message, const char* file, uint16_t line_number) {
   pthread_mutex_lock(&(instance.lock));
 
     assert(instance.is_initialized == 1);
@@ -42,6 +42,8 @@ logger_retcode_t logger_log(enum logger_log_level level, const char* message) {
     log_message_t *item = malloc(sizeof(log_message_t));
     item->level =  level;
     item->message = message;
+    item->file = file;
+    item->line_number = line_number;
 
     linked_list_push(instance.messages, (void*) item);
     
