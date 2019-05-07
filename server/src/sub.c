@@ -5,6 +5,7 @@
 
 #include "sub.h"
 #include "worker.h"
+#include "logger.h"
 
 #include <stdio.h>
 #include <stdint.h>
@@ -25,8 +26,10 @@ sub_retcode_t sub_init() {
   pubnub_t *ctx = pubnub_alloc();
 
   if (ctx == NULL) {
-    puts("Couldn't allocate a Pubnub context");
+    log_error("Couldn't allocate a Pubnub context");
     return sub_retcode__ERROR_ALLOC;
+  } else {
+    log_debug("Pubnub context allocated successfully");
   }
 
   instance.ctx = ctx;

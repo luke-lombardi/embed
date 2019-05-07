@@ -8,9 +8,11 @@ enum logger_log_level {
   , logger_log_level__INFO = 1
   , logger_log_level__DEBUG = 2
   , logger_log_level__WARNING = 3
+  , logger_log_level__ERROR = 4
 };
 
 #define log_trace(...) logger_log(logger_log_level__TRACE, __VA_ARGS__, __FILE__, __LINE__)
+#define log_error(...) logger_log(logger_log_level__ERROR, __VA_ARGS__, __FILE__, __LINE__)
 #define log_debug(...) logger_log(logger_log_level__DEBUG, __VA_ARGS__, __FILE__, __LINE__)
 #define log_info(...)  logger_log(logger_log_level__INFO, __VA_ARGS__, __FILE__, __LINE__)
 #define log_warn(...)  logger_log(logger_log_level__WARNING, __VA_ARGS__, __FILE__, __LINE__)

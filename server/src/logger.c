@@ -68,7 +68,6 @@ void* logger_worker(void *params) {
       uint8_t dummy = 0;
     }
 
-
     pthread_mutex_lock(&(wp->worker_ptr->lock));
       running = wp->worker_ptr->running;
     pthread_mutex_unlock(&(wp->worker_ptr->lock));
