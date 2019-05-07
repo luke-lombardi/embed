@@ -27,8 +27,6 @@ sub_retcode_t sub_init() {
   if (ctx == NULL) {
     puts("Couldn't allocate a Pubnub context");
     return sub_retcode__ERROR_ALLOC;
-  } else {
-    printf("ok\n");
   }
 
   instance.ctx = ctx;

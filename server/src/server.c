@@ -1,6 +1,7 @@
 #include "worker.h"
 #include "sub.h"
 #include "cache.h"
+#include "logger.h"
 
 #include <stdio.h>
 #include <pthread.h>
@@ -12,7 +13,7 @@ static void init() {
   // create workers, but don't run them yet
   worker_manager_create_worker(sub_worker, NULL, "cache_worker", 0 /* start_on_create */);
   worker_manager_create_worker(sub_worker, NULL, "sub_worker", 0 /* start_on_create */);
-
+  worker_manager_create_worker(logger_worker, NULL, "logger", 0 /* start_on_create */);
 }
 
 int main(int argc, char **argv) {
@@ -20,12 +21,20 @@ int main(int argc, char **argv) {
 
   // worker_manager_start_worker("cache_worker");
   worker_manager_start_worker("sub_worker");
+  worker_manager_start_worker("logger");
+
+  // short delay to allow the logger to initialize
+  for(uint32_t i=0;i<1000000;i++) {}
+
+  log_warn("hey there");
+  log_debug("another one");
+  log_debug("this is weird");
+  log_debug("fuck meeeee");
 
   while(1) {
-    
-    // break;
+    // log_warn("hey there");
   }
 
-  worker_manager_uninit();
+  // worker_manager_uninit();
   return 0;
 }
