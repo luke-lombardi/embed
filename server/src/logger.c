@@ -91,10 +91,14 @@ void* logger_worker(void *params) {
     pthread_mutex_unlock(&(instance.lock));
 
 
-
     pthread_mutex_lock(&(wp->worker_ptr->lock));
       running = wp->worker_ptr->running;
     pthread_mutex_unlock(&(wp->worker_ptr->lock));
+  }
+
+  // close file handle
+  if(instance.fp != NULL) {
+    fclose(instance.fp);
   }
 
   wp->worker_ptr->finished = 1;
