@@ -1,5 +1,4 @@
 #include "pubnub_sync.h"
-
 #include "core/pubnub_helper.h"
 #include "core/pubnub_timers.h"
 
@@ -13,10 +12,8 @@
 #include <assert.h>
 #include <time.h>
 
-
 #define PUBNUB_PUBLISH_KEY  "pub-c-030e0611-2f65-49db-b496-29f6f0ff25f9"
 #define PUBNUB_SUBSCRIBE_KEY  "sub-c-41a2f9e6-6e96-11e9-8724-8269f6864ada"
-
 
 struct sub_instance {
   pubnub_t *ctx; 
